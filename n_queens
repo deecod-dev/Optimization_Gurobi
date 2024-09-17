@@ -1,0 +1,81 @@
+#chess:
+from gurobipy import *
+import gurobipy as gp
+m=Model("queens")
+n=8 #also change the 7 to n-1 in the loops
+x=m.addVars(n,n,vtype=GRB.BINARY,name="x")
+# print(x[0,0])
+for i in range(n):
+    m.addConstr(sum(x[j,i] for j in range(n))==1)
+    m.addConstr(sum(x[i,j] for j in range(n))==1)
+
+for i in range(n):
+    for j in range(i+1):
+    #     print(7-j,7+j-i) 
+        print(i-j,j)
+    print()
+    m.addConstr(sum( x[7-j,7+j-i] for j in range(i+1) )<=1)
+    m.addConstr(sum( x[i-j,j] for j in range(i+1) )<=1)
+
+for i in range(n):
+    # for j in range(i+1):
+    #     print(j,7-(i-j))
+    #     print(7-(i-j),j)
+    # print()
+    m.addConstr(sum( x[j,7-(i-j)] for j in range(i+1) )<=1)
+    m.addConstr(sum( x[7-(i-j),j] for j in range(i+1) )<=1)
+m.setObjective(0,GRB.MINIMIZE)
+m.optimize()
+
+
+solution = []
+for i in range(n):
+    row = ""
+    for j in range(n):
+        if x[i, j].x > 0.5:
+            row += "Q " 
+            solution.append((i, j))
+        else:
+            row += ". " 
+    print(row)
+print(f"Solution: {solution}")
+
+
+
+
+#below approaches didn't work
+# #chess:
+# from gurobipy import *
+# import gurobipy as gp
+# m=Model("queens")
+# n=8
+# x=m.addVars(n,vtype=GRB.INTEGER,name="x",lb=1,ub=n)
+# m.addConstr(x[0]>=1)
+# m.addConstr(x[0]<=8)
+# M=100
+# for i in range(n-1): #0 to 6, 1
+#     it=0
+#     for j in range((i+1)-1,-1,-1):#1,0
+#         #x2!=x1, x2!=x0
+#         # print(i+1,"!=",i-it,"+",0)
+#         b = m.addVar(vtype=GRB.BINARY)
+#         m.addConstr(x[i+1]<x[i]+ M * b)
+#         m.addConstr(x[i+1]>x[i])
+#         # print(i+1,"!=",i-it,"+",(i-j+1))
+#         b = m.addVar(vtype=GRB.BINARY)
+#         m.addConstr(x[i+1]>x[i]+(i-j+1))
+#         m.addConstr(x[i+1]<x[i]+(i-j+1))
+#         # print(i+1,"!=",i-it,"-",(i-j+1))
+#         b = m.addVar(vtype=GRB.BINARY)
+#         m.addConstr(x[i+1]>x[i]-(i-j+1))
+#         m.addConstr(x[i+1]<x[i]-(i-j+1))
+#         it+=1
+    
+
+# # chess:
+# from gurobipy import *
+# import gurobipy as gp
+# m=Model("queens")
+# n=8
+# x=m.addVars(n,n,vtype=GRB.INTEGER,name="x",lb=1,ub=n)
+# lst=[]
