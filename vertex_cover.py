@@ -117,40 +117,37 @@
 # # 3 5 2
 # # 4 5 4
 
-#uncomment this for the 3rd code with vertex cover with minimum weights:
-# graph = {
-#     1: [(2, 2), (3, 3), (4, 1), (5, 4)],
-#     2: [(1, 2), (3, 5), (4, 2), (5, 3)],
-#     3: [(1, 3), (2, 5), (4, 1), (5, 2)],
-#     4: [(1, 1), (2, 2), (3, 1), (5, 4)],
-#     5: [(1, 4), (2, 3), (3, 2), (4, 4)]
-# }
+# uncomment this for the 3rd code with vertex cover with minimum weights:
+graph = {
+    1: [(2, 2), (3, 3), (4, 1), (5, 4)],
+    2: [(1, 2), (3, 5), (4, 2), (5, 3)],
+    3: [(1, 3), (2, 5), (4, 1), (5, 2)],
+    4: [(1, 1), (2, 2), (3, 1), (5, 4)],
+    5: [(1, 4), (2, 3), (3, 2), (4, 4)]
+}
 
-# nodes=[i for i in graph.keys()]
-# # print(nodes)
-# # for any problem in which we have to select something, we can give that thing a binary variable and the use the select or don't select method\
-# from gurobipy import *
-# import gurobipy as gp
-# m=Model("cover")
-# x=m.addVars(len(nodes),vtype=GRB.BINARY,name="x") #ye array
-# # m.setObjective(sum(x[i-1] for i in nodes),GRB.MINIMIZE) #sum of 0s and 1's
-# edges=[]
-# weights={}
-# for i in graph.keys():
-#     for j in graph[i]:
-#         if(i<j[0]):
-#             edges.append([i,j[0],j[1]])
-# print(edges)
+nodes=[i for i in graph.keys()]
+# print(nodes)
+# for any problem in which we have to select something, we can give that thing a binary variable and the use the select or don't select method\
+from gurobipy import *
+import gurobipy as gp
+m=Model("cover")
+x=m.addVars(len(nodes),vtype=GRB.BINARY,name="x") #ye array
+# m.setObjective(sum(x[i-1] for i in nodes),GRB.MINIMIZE) #sum of 0s and 1's
+edges=[]
+weights={}
+for i in graph.keys():
+    for j in graph[i]:
+        if(i<j[0]):
+            edges.append([i,j[0],j[1]])
+print(edges)
 
-# for i in edges:
-#     # print(i[0],i[1])
-#     m.addConstr((x[i[0]-1]+x[i[1]-1])>=1)
+for i in edges:
+    # print(i[0],i[1])
+    m.addConstr((x[i[0]-1]+x[i[1]-1])>=1)
 
-# # m.setObjective(sum( e[2] for e in edges if( x[e[0]-1] + x[e[1]-1]>=2 )), GRB.MINIMIZE)
-# m.setObjective(sum( e[2]*x[e[0]-1]*x[e[1]-1] for e in edges), GRB.MINIMIZE)
-# m.optimize()
-# print("min weights:",m.ObjVal) 
-# print(x)
-
-
-
+# m.setObjective(sum( e[2] for e in edges if( x[e[0]-1] + x[e[1]-1]>=2 )), GRB.MINIMIZE)
+m.setObjective(sum( e[2]*x[e[0]-1]*x[e[1]-1] for e in edges), GRB.MINIMIZE)
+m.optimize()
+print("min weights:",m.ObjVal) 
+print(x)
